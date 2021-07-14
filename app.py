@@ -20,11 +20,10 @@ def predict():
     #For rendering results on HTML GUI
     ticker = request.form['ticker']
     processed_ticker= ticker.upper()
-    start_date = request.form['start_date']
-    end_date = request.form['end_date']
+
 
     # Fetching data from Yahoo Finance
-    data = yf.download(processed_ticker, start=start_date, end=end_date)
+    data = yf.download(processed_ticker)
     forecast_out = int(request.form['forecast_out'])
     data['Predictions'] = data['Adj Close'].shift(-forecast_out)
     data = data[['Adj Close', 'Predictions']]
@@ -33,7 +32,7 @@ def predict():
     y = data['Predictions']
     y = y[:-forecast_out]
     prediction = model.predict(X)
-    prediction = 'The price will move from {} to {}.'.format(y[-1], prediction[-1])       
+    prediction = 'The price of {} will move from ${} to ${} in {} days.'.format(processed_ticker, y[-1].round(2), prediction[-1].round(2), forecast_out)       
     return render_template('index.html', prediction=prediction)
 
 if __name__ == "__main__":
