@@ -18,9 +18,15 @@ function unpack(rows, index) {
   });
 }
 
+var inputs = document.getElementById("my-form").elements;
+var ticker = inputs["ticker"].value;
+var start_date = inputs["start_date"].value;
+var end_date = inputs["end_date"].value;
+
+
 function getMonthlyData() {
 
-  var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/AMZN.json?start_date=2016-10-01&end_date=2017-10-01&collapse=monthly&api_key=${apiKey}`;
+  var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/${ticker}.json?start_date=${start_date}&end_date=${end_date}&collapse=monthly&api_key=${apiKey}`;
   d3.json(queryUrl).then(function(data) {
     var dates = unpack(data.dataset.data, 0);
     var openPrices = unpack(data.dataset.data, 1);
