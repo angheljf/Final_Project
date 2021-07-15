@@ -9,12 +9,12 @@ app = Flask(__name__)
 
 model = pickle.load(open('Final_Project\model.pkl', 'rb'))
 
-# Route to render index.html template using data from Mongo
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Route that will trigger the scrape function
+# Route that will trigger the predict function
 @app.route('/predict',methods=['POST'])
 def predict():
     #For rendering results on HTML GUI
@@ -33,7 +33,21 @@ def predict():
     y = y[:-forecast_out]
     prediction = model.predict(X)
     prediction = 'The price of {} will move from ${} to ${} in {} days.'.format(processed_ticker, y[-1].round(2), prediction[-1].round(2), forecast_out)       
-    return render_template('index.html', prediction=prediction)
+    return render_template('index.html',prediction=prediction)
+
+@app.route('/charts')
+def charts():       
+    
+    return render_template('charts.html')
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/tables')
+def tables():
+    return render_template('tables.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

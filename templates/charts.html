@@ -9,13 +9,15 @@
         <title>Dashboard - Final Project</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="./static/css/styles.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://unpkg.com/simple-statistics@5.0.0/dist/simple-statistics.min.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3">Dashboard</a>
+            <a class="navbar-brand ps-3" href="templates/index.html">Dashboard</a>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -49,24 +51,9 @@
                             <li class="breadcrumb-item active">Write the stock ticker and how many days in the future (max. 30) in order to see the future price of the stock. </li>
                         </ol>
                         <br>
-                        <div class="login">
-                            <form action="{{ url_for('predict')}}"method='post'>
-                                <div class="row">
-                                  <div class="col">
-                                    <input class ="form-control form-control-lg" type='text' name='ticker' placeholder='Enter a stock ticker'>
-                                  </div>
-                                  <div class="col">
-                                    <input class ="form-control form-control-lg" type='text' name='forecast_out'  placeholder='Enter number of days'>
-                                  </div>
-                                  <div class="col">
-                                  <button type="submit" class="btn btn-primary btn-lg">Predict</button>
-                                  </div>
-                                </div>
-                              </form>
-                              <br>
-                             <h3 class="mt-4">{{ prediction }}</h3>
-                        </div>
+                        <div id="plot"></div> 
             </div>
         </div>
+        <script src="./static/js/chart.js"></script>
     </body>
 </html>
