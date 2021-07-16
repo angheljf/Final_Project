@@ -1,5 +1,3 @@
-var apiKey = "_JYx4iXZLFyMEQZB59du";
-
 /**
  * Helper function to select stock data
  * Returns an array of values
@@ -12,21 +10,38 @@ var apiKey = "_JYx4iXZLFyMEQZB59du";
  * index 4 - Close
  * index 5 - Volume
  */
-function unpack(rows, index) {
+ function unpack(rows, index) {
   return rows.map(function(row) {
     return row[index];
   });
 }
 
-var inputs = document.getElementById("my-form").elements;
-var ticker = inputs["ticker"].value;
-var start_date = inputs["start_date"].value;
-var end_date = inputs["end_date"].value;
+// Submit Button handler
+function handleSubmit() {
+  // Prevent the page from refreshing
+  d3.event.preventDefault();
 
+  // Select the input value from the form
+  var stock = d3.select("#stockInput").node().value;
+  console.log(stock);
+  var startDate = d3.select("#startDate").node().value;
+  console.log(startDate);
+  var endDate = d3.select("#endDate").node().value;
+  console.log(endDate);
 
-function getMonthlyData() {
+  // clear the input value
+  d3.select("#stockInput").node().value = "";
+  d3.select("#startDate").node().value = "";
+  d3.select("#endDate").node().value = "";
 
-  var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/${ticker}.json?start_date=${start_date}&end_date=${end_date}&collapse=monthly&api_key=${apiKey}`;
+  // Build the plot with the new stock
+  getMonthlyData(stock, startDate, endDate);
+}
+
+function getMonthlyData(stock, startDate, endDate) {
+  var apiKey = "_JYx4iXZLFyMEQZB59du";
+  var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/${stock}.json?start_date=${startDate}&end_date=${endDate}&api_key=${apiKey}`;
+  console.log(queryUrl);
   d3.json(queryUrl).then(function(data) {
     var dates = unpack(data.dataset.data, 0);
     var openPrices = unpack(data.dataset.data, 1);
@@ -34,26 +49,19 @@ function getMonthlyData() {
     var lowPrices = unpack(data.dataset.data, 3);
     var closingPrices = unpack(data.dataset.data, 4);
     var volume = unpack(data.dataset.data, 5);
-    buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume);
-  });
+    var table = d3.select("#summary-table");
+    var tbody = table.select("tbody");
+    var trow;
+    for (var i = 0; i < dates.length; i++) {
+      trow = tbody.append("tr");
+      trow.append("td").text(dates[i]);
+      trow.append("td").text(openPrices[i]);
+      trow.append("td").text(highPrices[i]);
+      trow.append("td").text(lowPrices[i]);
+      trow.append("td").text(closingPrices[i]);
+      trow.append("td").text(volume[i]);
+    }
+  })
 }
 
-function buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume) {
-  var table = d3.select("#summary-table");
-  var tbody = table.select("tbody");
-  var trow;
-  for (var i = 0; i < 12; i++) {
-    trow = tbody.append("tr");
-    trow.append("td").text(dates[i]);
-    trow.append("td").text(openPrices[i]);
-    trow.append("td").text(highPrices[i]);
-    trow.append("td").text(lowPrices[i]);
-    trow.append("td").text(closingPrices[i]);
-    trow.append("td").text(volume[i]);
-  }
-}
-
-    getMonthlyData();
-
-    
-
+d3.select("#submit").on("click", handleSubmit);

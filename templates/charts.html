@@ -45,13 +45,21 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Stock Price Predictor</h1>
+                        <h1 class="mt-4">Closing Price History</h1>
                         <br>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Write the stock ticker and how many days in the future (max. 30) in order to see the future price of the stock. </li>
+                            <li class="breadcrumb-item active">Write the stock ticker, start and end date in order to see the closing price history of a particular stock. </li>
                         </ol>
-                        <br>
-                        <div id="plot"></div> 
+                        <br> 
+                        <form class="form-inline">
+                            <div class="form-group">
+                              <input type="text" class="form-control" id="stockInput" placeholder="Enter a stock">
+                              <input type="text" class="form-control" id="startDate" placeholder="Enter start date (YYYY-MM-DD)">
+                              <input type="text" class="form-control" id="endDate" placeholder="Enter end date (YYYY-MM-DD)">
+                            </div>
+                            <button id="submit" type="submit" class="btn btn-default">Plot Stock</button>
+                          </form>
+                          <div id="plot"></div>
             </div>
         </div>
         <script src="./static/js/chart.js"></script>

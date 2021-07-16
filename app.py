@@ -7,7 +7,7 @@ import yfinance as yf
 # Create an instance of Flask
 app = Flask(__name__)
 
-model = pickle.load(open('Final_Project\model.pkl', 'rb'))
+model = pickle.load(open('model.pkl', 'rb'))
 
 
 @app.route('/')
@@ -32,7 +32,7 @@ def predict():
     y = data['Predictions']
     y = y[:-forecast_out]
     prediction = model.predict(X)
-    prediction = 'The price of {} will move from ${} to ${} in {} days.'.format(processed_ticker, y[-1].round(2), prediction[-1].round(2), forecast_out)       
+    prediction = 'The price of {} will move from ${} to ${} in {} days. This result is based on a Linear Regression model with an R-squared (R2): 0.9521'.format(processed_ticker, y[-1].round(2), prediction[-1].round(2), forecast_out)       
     return render_template('index.html',prediction=prediction)
 
 @app.route('/charts')
@@ -47,7 +47,6 @@ def index():
 @app.route('/tables')
 def tables():
     return render_template('tables.html')
-
 
 if __name__ == "__main__":
     app.run(debug=True)
