@@ -40,6 +40,11 @@ def charts():
     
     return render_template('charts.html')
 
+@app.route('/charts2')
+def charts2():       
+    
+    return render_template('charts2.html')
+
 @app.route('/index')
 def index():
     return render_template('index.html')

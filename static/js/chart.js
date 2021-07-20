@@ -10,7 +10,11 @@
  * index 4 - Close
  * index 5 - Volume
  */
-
+ function unpack(rows, index) {
+  return rows.map(function(row) {
+    return row[index];
+  });
+}
 // Submit Button handler
 function handleSubmit() {
   // Prevent the page from refreshing
@@ -43,14 +47,14 @@ function buildPlot(stock, startDate, endDate) {
     var stock = data.dataset.dataset_code;
     var startDate = data.dataset.start_date;
     var endDate = data.dataset.end_date;
+    var dates = unpack(data.dataset.data, 0);
+    var openingPrices = unpack(data.dataset.data, 1);
+    var highPrices = unpack(data.dataset.data, 2);
+    var lowPrices = unpack(data.dataset.data, 3);
+    var closingPrices = unpack(data.dataset.data, 4);
+    var volume = unpack(data.dataset.data, 5);
     // Print the names of the columns
     console.log(data.dataset.column_names);
-    // Print the data for each day
-    console.log(data.dataset.data);
-    var dates = data.dataset.data.map(row => row[0]);
-    // console.log(dates);
-    var closingPrices = data.dataset.data.map(row => row[4]);
-    // console.log(closingPrices);
 
     var trace1 = {
       type: "scatter",
@@ -62,11 +66,54 @@ function buildPlot(stock, startDate, endDate) {
         color: "#17BECF"
       }
     };
+    // Candlestick Trace
+    var trace2 = {
+      type: "candlestick",
+      x: dates,
+      high: highPrices,
+      low: lowPrices,
+      open: openingPrices,
+      close: closingPrices
+    };
 
-    var data = [trace1];
+    var trace3 = {
+      x: dates,
+      y: volume,
+      type: "scatter",
+      mode: "lines",
+      xaxis: "x2",
+      yaxis: "y2",
+      name: "Volume",
+
+    };
+
+    var moveMean = [];
+    for (var i = 1; i < closingPrices.length-1; i++)
+    {
+      var mean = (closingPrices[i-9] + closingPrices[i-8] + closingPrices[i-7] + closingPrices[i-6] + closingPrices[i-5] + closingPrices[i-4]
+        + closingPrices[i-3] + closingPrices[i-2] + closingPrices[i-1] + closingPrices[i] + closingPrices[i+1] + closingPrices[i+2]
+        + closingPrices[i+3] + closingPrices[i-4] + closingPrices[i+5] + closingPrices[i+6] + closingPrices[i+7] + closingPrices[i+8] + closingPrices[i+9])/20.0;
+      moveMean.push(mean);
+    }
+
+    var trace4 = {
+      x:dates,
+      y:moveMean,
+      type: "scatter",
+      mode: "lines",
+      name: "Moving Average",
+      xaxis:"x3",
+      yaxis:"y3"
+    };
+
+
+    var data = [trace1, trace2, trace3, trace4];
 
     var layout = {
-      title: `${stock} closing prices`,
+      autosize: false,
+      width: 1050,
+      height: 1050,
+      title: `${stock} Closing Prices , Volume History & 20-Day Moving Average`,
       xaxis: {
         range: [startDate, endDate],
         type: "date"
@@ -74,7 +121,8 @@ function buildPlot(stock, startDate, endDate) {
       yaxis: {
         autorange: true,
         type: "linear"
-      }
+      },
+      grid: {rows: 3, columns: 1, pattern: 'independent'},
     };
 
     Plotly.newPlot("plot", data, layout);
